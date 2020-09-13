@@ -28,6 +28,10 @@ async fn notify(
     };
 }
 
+async fn health() -> impl Responder {
+    return HttpResponse::Ok();
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::from_env(Env::default().default_filter_or("info")).init();
@@ -47,6 +51,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())
             .data(app_state.clone())
             .route("/notify/{key}", web::post().to(notify))
+            .route("/health", web::get().to(health))
     })
     .workers(utils::get_workers())
     .bind(format!("0.0.0.0:{}", utils::get_port()))?
