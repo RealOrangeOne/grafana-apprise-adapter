@@ -48,6 +48,7 @@ async fn main() -> std::io::Result<()> {
             .data(app_state.clone())
             .route("/notify/{key}", web::post().to(notify))
     })
+    .workers(utils::get_workers())
     .bind(format!("0.0.0.0:{}", utils::get_port()))?
     .run()
     .await

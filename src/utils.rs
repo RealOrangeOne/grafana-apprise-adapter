@@ -6,3 +6,11 @@ pub fn get_port() -> u16 {
         .parse::<u16>()
         .expect("Invalid port number");
 }
+
+
+pub fn get_workers() -> usize {
+    return env::var("WORKERS")
+        .unwrap_or_else(|_| "1".into())
+        .parse::<usize>()
+        .expect("Invalid worker count");
+}
