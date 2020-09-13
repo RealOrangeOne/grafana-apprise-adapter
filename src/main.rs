@@ -2,17 +2,13 @@ use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
 
-use serde::Deserialize;
-
+mod grafana;
 mod utils;
 
-#[derive(Deserialize, Debug)]
-struct GrafanaPayload {
-    title: String,
-    message: String,
-}
-
-async fn notify(data: web::Json<GrafanaPayload>, key: web::Path<String>) -> impl Responder {
+async fn notify(
+    data: web::Json<grafana::GrafanaPayload>,
+    key: web::Path<String>,
+) -> impl Responder {
     println!("Data: {:?}", data);
     println!("Key: {:?}", key);
     return HttpResponse::NoContent();
