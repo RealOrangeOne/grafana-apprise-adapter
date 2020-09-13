@@ -1,7 +1,8 @@
+use actix_web::client::Client;
+use actix_web::http::StatusCode;
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
-use reqwest::Client;
 use std::process::exit;
 use url::Url;
 mod apprise;
@@ -20,9 +21,11 @@ async fn notify(
 ) -> impl Responder {
     let payload = apprise::ApprisePayload::from(data.into_inner());
     let apprise_url = apprise::get_apprise_notify_url(&state.apprise_url, &key).expect("URL Parse");
-    let client = Client::new().post(apprise_url).json(&payload);
-    let response = client.send().await.expect("Request send");
-    return HttpResponse::new(response.status());
+    let client = Client::default();
+    return match client.post(apprise_url.as_str()).send_json(&payload).await {
+        Ok(response) => HttpResponse::new(response.status()),
+        Err(_) => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
+    };
 }
 
 #[actix_web::main]
