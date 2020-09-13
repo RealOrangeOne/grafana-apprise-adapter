@@ -14,12 +14,12 @@ pub enum GrafanaState {
 
 #[derive(Deserialize, Debug)]
 pub struct GrafanaPayload {
-    title: String,
-    message: String,
-    state: GrafanaState,
+    pub title: String,
+    pub message: String,
+    pub state: GrafanaState,
 
     #[serde(rename = "imageUrl")]
-    image: String,
+    pub image: String,
 
-    tags: HashMap<String, String>,
+    pub tags: HashMap<String, String>,
 }
