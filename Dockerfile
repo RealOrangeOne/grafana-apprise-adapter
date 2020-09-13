@@ -2,7 +2,7 @@ FROM rust:1-slim as builder
 
 WORKDIR /usr/src/grafana-apprise-adapter
 
-RUN apk --no-cache add ca-certificates openssl-dev
+RUN apt-get update && apt-get install libssl-dev
 
 COPY ./src /usr/src/grafana-apprise-adapter/src
 COPY Cargo.toml /usr/src/grafana-apprise-adapter/Cargo.toml
