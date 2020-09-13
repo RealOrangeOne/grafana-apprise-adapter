@@ -12,4 +12,6 @@ FROM debian:buster-slim
 
 COPY --from=builder /usr/src/grafana-apprise-adapter/target/release/grafana-apprise-adapter /usr/local/bin/grafana-apprise-adapter
 
+EXPOSE 5000
+
 CMD ["/usr/local/bin/grafana-apprise-adapter"]
