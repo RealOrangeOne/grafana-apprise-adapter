@@ -1,0 +1,10 @@
+[package]
+name = "grafana-apprise-adapter"
+version = "0.1.0"
+authors = ["Jake Howard <git@theorangeone.net>"]
+edition = "2018"
+repository = "https://github.com/RealOrangeOne/date-group"
+readme = "README.md"
+license-file = "LICENSE"
+
+[dependencies]
