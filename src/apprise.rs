@@ -44,9 +44,11 @@ impl From<GrafanaPayload> for ApprisePayload {
     }
 }
 
-pub fn get_apprise_url(key: &str) -> Result<Url, ParseError> {
-    let apprise_host =
-        env::var("APPRISE_HOST").unwrap_or_else(|_| String::from("http://apprise:8000"));
-    let url = Url::parse(&apprise_host)?;
-    return url.join(&format!("/notify/{}", key));
+pub fn get_apprise_notify_url(host: &Url, key: &str) -> Result<Url, ParseError> {
+    return host.join(&format!("/notify/{}", key));
+}
+
+pub fn get_apprise_url() -> Option<Url> {
+    let apprise_env = env::var("APPRISE_URL").ok()?;
+    return Url::parse(&apprise_env).ok();
 }
