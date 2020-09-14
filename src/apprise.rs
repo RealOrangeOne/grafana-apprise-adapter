@@ -52,3 +52,31 @@ pub fn get_apprise_url() -> Option<Url> {
     let apprise_env = env::var("APPRISE_URL").ok()?;
     return Url::parse(&apprise_env).ok();
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env::set_var;
+    use url::Url;
+
+    #[test]
+    fn test_get_apprise_url() {
+        assert!(get_apprise_url().is_none());
+        set_var("APPRISE_URL", "http://apprise:8080");
+        let parsed_url = get_apprise_url().unwrap();
+        assert_eq!(parsed_url.domain(), Some("apprise"));
+        assert_eq!(parsed_url.port(), Some(8080));
+        assert_eq!(parsed_url.scheme(), "http");
+    }
+
+    #[test]
+    fn test_get_apprise_notify_url() {
+        let apprise_url = Url::parse("http://apprise:8080").unwrap();
+        assert_eq!(
+            get_apprise_notify_url(&apprise_url, "foo")
+                .unwrap()
+                .as_str(),
+            "http://apprise:8080/notify/foo"
+        );
+    }
+}

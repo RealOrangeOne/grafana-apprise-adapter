@@ -13,3 +13,24 @@ pub fn get_workers() -> usize {
         .parse::<usize>()
         .expect("Invalid worker count");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use std::env::set_var;
+
+    #[test]
+    fn test_get_workers() {
+        assert_eq!(get_workers(), 1);
+        set_var("WORKERS", "3");
+        assert_eq!(get_workers(), 3);
+    }
+
+    #[test]
+    fn test_get_port() {
+        assert_eq!(get_port(), 5000);
+        set_var("PORT", "8000");
+        assert_eq!(get_port(), 8000);
+    }
+}
