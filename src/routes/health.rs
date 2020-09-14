@@ -1,5 +1,18 @@
-use actix_web::{HttpResponse, Responder};
+use actix_web::HttpResponse;
 
-pub async fn health() -> impl Responder {
-    return HttpResponse::Ok();
+pub async fn health() -> HttpResponse {
+    return HttpResponse::Ok().finish();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use actix_web::http::StatusCode;
+
+    #[actix_rt::test]
+    async fn test_health() {
+        let response = health().await;
+        assert_eq!(response.status(), StatusCode::OK);
+    }
 }

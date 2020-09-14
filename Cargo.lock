@@ -718,6 +718,7 @@ checksum = "aaf91faf136cb47367fa430cd46e37a788775e7fa104f8b4bcb3861dc389b724"
 name = "grafana-apprise-adapter"
 version = "0.1.0"
 dependencies = [
+ "actix-rt",
  "actix-web",
  "env_logger",
  "log",
