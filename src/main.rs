@@ -1,5 +1,4 @@
 use actix_web::client::Client;
-use actix_web::http::StatusCode;
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use env_logger::Env;
@@ -20,11 +19,14 @@ async fn notify(
     state: web::Data<AppState>,
 ) -> impl Responder {
     let payload = apprise::ApprisePayload::from(data.into_inner());
-    let apprise_url = apprise::get_apprise_notify_url(&state.apprise_url, &key).expect("URL Parse");
+    let apprise_url = match apprise::get_apprise_notify_url(&state.apprise_url, &key) {
+        Ok(url) => url,
+        Err(_) => return HttpResponse::BadRequest().finish(),
+    };
     let client = Client::default();
     return match client.post(apprise_url.as_str()).send_json(&payload).await {
         Ok(response) => HttpResponse::new(response.status()),
-        Err(_) => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(_) => HttpResponse::BadGateway().finish(),
     };
 }
 
