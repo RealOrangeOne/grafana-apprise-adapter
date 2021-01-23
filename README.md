@@ -3,8 +3,6 @@ Send [grafana](https://grafana.com/docs/grafana/latest/alerting/notifications/) 
 
 ![CI](https://github.com/RealOrangeOne/grafana-apprise-adapter/workflows/CI/badge.svg)
 
-**Work in progress!** - Maybe don't deploy this until this message goes away.
-
 ## Configuration
 
 - `$APPRISE_URL`: Base URL for [apprise API](https://github.com/caronc/apprise-api/). **required**
