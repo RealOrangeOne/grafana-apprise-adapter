@@ -11,7 +11,7 @@ mod utils;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
     let apprise_url = match apprise::get_apprise_url() {
         Some(h) => h,
