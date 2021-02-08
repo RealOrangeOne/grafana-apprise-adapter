@@ -9,17 +9,31 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/386, linux/amd64, linux/arm64/v8]
+    needs: test
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . --tag ${GITHUB_REPOSITORY,,}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build containers
+        uses: docker/build-push-action@v2
+        with:
+          platforms: ${{ matrix.platform }}
+          load: true
 
       - name: Show image info
         run: docker images
 
   build:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -35,13 +49,37 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-          components: rustfmt, clippy
 
       - name: Build
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --release
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v1
+        with:
+          path: $HOME/.cargo
+          key: cargo-${{ hashFiles('Cargo.lock') }}
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: clippy
+
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
 
       - name: Test
         uses: actions-rs/cargo@v1
@@ -54,13 +92,22 @@ jobs:
           command: clippy
           args: -- -D warnings
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt
+
       - name: Run cargo fmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
           args: --all -- --check
-
-      - name: Check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
